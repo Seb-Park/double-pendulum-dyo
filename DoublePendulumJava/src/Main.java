@@ -22,7 +22,7 @@ public class Main implements Runnable, KeyListener {
     public Bob topBob;
     public Bob bottomBob;
 
-    public double gravityAcc = 0.3;
+    public double gravityAcc = -0.005;
 
     public static void main(String[] args) {
         Main ex = new Main();
@@ -34,6 +34,7 @@ public class Main implements Runnable, KeyListener {
         setUpGraphics();
         topBob = new Bob(700,350,500,0, gravityAcc);
         bottomBob = new Bob(700,500,topBob.originx,topBob.originy, gravityAcc);
+        bottomBob.setAnchor(topBob);
     }
 
     public void run() {
@@ -48,6 +49,7 @@ public class Main implements Runnable, KeyListener {
     public void moveThings()
     {
         topBob.move();
+        bottomBob.move();
     }
 
     public void pause(int time ){
