@@ -1,12 +1,10 @@
-import java.awt.Graphics2D;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
-import java.awt.*;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 
 public class Main implements Runnable, KeyListener {
@@ -24,17 +22,19 @@ public class Main implements Runnable, KeyListener {
 
     public double gravityAcc = -0.005;
 
-    public static void main(String[] args) {
-        Main ex = new Main();
-        new Thread(ex).start();
-    }
-
     public Main() {
 
         setUpGraphics();
-        topBob = new Bob(700,350,500,0, gravityAcc);
-        bottomBob = new Bob(700,500,topBob.originx,topBob.originy, gravityAcc);
+//        topBob = new Bob(700, 350, 500, 0, gravityAcc);
+//        bottomBob = new Bob(700, 500, topBob.originx, topBob.originy, gravityAcc);
+        topBob = new Bob(500, 0, 200, 20, false, gravityAcc);
+        bottomBob = new Bob(700, 350, 200, 60, false, gravityAcc);
         bottomBob.setAnchor(topBob);
+    }
+
+    public static void main(String[] args) {
+        Main ex = new Main();
+        new Thread(ex).start();
     }
 
     public void run() {
@@ -46,13 +46,12 @@ public class Main implements Runnable, KeyListener {
     }
 
 
-    public void moveThings()
-    {
+    public void moveThings() {
         topBob.move();
         bottomBob.move();
     }
 
-    public void pause(int time ){
+    public void pause(int time) {
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {
@@ -82,11 +81,10 @@ public class Main implements Runnable, KeyListener {
         canvas.requestFocus();
         canvas.addKeyListener(this);
 
-        frame.addComponentListener(new ComponentAdapter()
-        {
+        frame.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
-                Component c = (Component)evt.getSource();
-                canvas.setBounds(0,0,frame.getWidth(),frame.getHeight());
+                Component c = (Component) evt.getSource();
+                canvas.setBounds(0, 0, frame.getWidth(), frame.getHeight());
             }
         });
 
@@ -100,11 +98,19 @@ public class Main implements Runnable, KeyListener {
         Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
         g.clearRect(0, 0, frame.getWidth(), frame.getHeight());
 
-        g.fillOval((int)(topBob.x-10), (int)(topBob.y-10), 20,20);
-        g.fillOval((int)(bottomBob.x-10), (int)(bottomBob.y-10), 20,20);
+        g.setColor(Color.red);
 
-        g.drawLine((int)(topBob.x), (int)(topBob.y), (int)(topBob.fulcrumx), (int)(topBob.fulcrumy));
-        g.drawLine((int)(bottomBob.x), (int)(bottomBob.y), (int)(bottomBob.fulcrumx), (int)(bottomBob.fulcrumy));
+        g.drawPolyline(bottomBob.pathX, bottomBob.pathY, bottomBob.pathSize);
+
+        g.setColor(Color.black);
+
+        g.fillOval((int) (topBob.x - 10), (int) (topBob.y - 10), 20, 20);
+        g.fillOval((int) (bottomBob.x - 10), (int) (bottomBob.y - 10), 20, 20);
+
+        g.drawLine((int) (topBob.x), (int) (topBob.y), (int) (topBob.fulcrumx), (int) (topBob.fulcrumy));
+        g.drawLine((int) (bottomBob.x), (int) (bottomBob.y), (int) (bottomBob.fulcrumx), (int) (bottomBob.fulcrumy));
+
+
 
         g.dispose();
 
