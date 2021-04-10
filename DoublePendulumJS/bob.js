@@ -13,11 +13,9 @@ class Bob {
         this.y = Math.cos(this.angle) * this.stringLength;
         this.angularVel = 0;
         this.gravity = pgravity;
-        this.pathX = [];
-        this.pathY = [];
+        this.path = [];
         this.anchored = false;
         this.anchor = null;
-        this.counter = 0;
         this.lineColor = "rgb(0,0,0)";
         this.bobColor = "rgb(0,0,0)";
     }
@@ -65,16 +63,9 @@ class Bob {
 
         this.setPositionFromAngle();
 
-        this.pathX[this.counter] = Math.floor(this.x);
-        this.pathY[this.counter] = Math.floor(this.y);
+        this.path.push([Math.floor(this.x),Math.floor(this.y)]);
         if (this.pathSize < this.maxPoints) {
             this.pathSize++;
-        }
-        if (this.counter < this.maxPoints - 1) {
-            this.counter++;
-        }
-        else {
-            this.counter = 0;
         }
     }
 
