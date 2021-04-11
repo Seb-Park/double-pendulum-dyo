@@ -44,21 +44,30 @@ class Bob {
         circle.arc(this.x, this.y, this.mass, 0, 2 * Math.PI);
         ctx.fill(circle);
     }
-    renderPath(ctx) {
+    renderPath(ctx, showDecay, showFade) {
         ctx.beginPath();
         ctx.strokeStyle = this.bobColor;
-        ctx.moveTo(this.path[0][0], this.path[0][1]);
-        // for (var i = 1; i < this.path.length; i++) {
-        //     ctx.lineTo(this.path[i][0], this.path[i][1]);
-        // }
-        for (var i = 1; i < this.path.length; i++) {
-            ctx.beginPath();
-            ctx.moveTo(this.path[i-1][0], this.path[i-1][1]);
-            ctx.strokeStyle=`rgba(${i*(255/this.path.length)},0,${255-(i*(255/this.path.length))},${i/this.path.length})`;
-            ctx.lineTo(this.path[i][0], this.path[i][1]);
+        if (!showDecay) {
+            ctx.moveTo(this.path[0][0], this.path[0][1]);
+            for (var i = 1; i < this.path.length; i++) {
+                ctx.lineTo(this.path[i][0], this.path[i][1]);
+            }
             ctx.stroke();
         }
-        ctx.stroke();
+        else {
+            for (var i = 1; i < this.path.length; i++) {
+                ctx.beginPath();
+                ctx.moveTo(this.path[i - 1][0], this.path[i - 1][1]);
+                if (showFade) {
+                    ctx.strokeStyle = `rgba(${i * (255 / this.path.length)},0,${255 - (i * (255 / this.path.length))},${i / this.path.length})`;
+                }
+                else {
+                    ctx.strokeStyle = `rgb(${i * (255 / this.path.length)},0,${255 - (i * (255 / this.path.length))})`;
+                }
+                ctx.lineTo(this.path[i][0], this.path[i][1]);
+                ctx.stroke();
+            }
+        }
     }
     setAnchor(panchor) {
         this.parent = panchor;

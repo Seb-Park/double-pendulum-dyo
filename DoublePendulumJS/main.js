@@ -1,7 +1,30 @@
 var canvas;
 var gravityAcc = .5;
-var topPendulum = new Bob(window.innerWidth/2, window.innerHeight/2, 180.0, 70, false, gravityAcc);
-var bottomPendulum = new Bob(700, 350, 180.0, 50.0, false, gravityAcc);
+var topPendulum = new Bob(window.innerWidth / 2, window.innerHeight / 2, 180.0, 170, false, gravityAcc);//70 and -50 have been good so far
+var bottomPendulum = new Bob(700, 350, 180.0, 90, false, gravityAcc);
+var showDecayCheckbox = document.getElementById("show-decay");
+var showFadeCheckbox = document.getElementById("show-fade");
+var speedSlider = document.getElementById("speed-slider");
+var pauseTime = speedSlider.value;
+var topMassSlider = document.getElementById("top-mass");
+var bottomMassSlider = document.getElementById("bottom-mass");
+var playPauseButton = document.getElementById("play-pause");
+var isPlaying = playPauseButton.checked;
+
+function setUpInputs() {
+    speedSlider.oninput = function () {
+        pauseTime = 40 - this.value;
+    }
+    topMassSlider.oninput = function () {
+        topPendulum.setMass(this.value);
+    }
+    bottomMassSlider.oninput = function () {
+        bottomPendulum.setMass(this.value);
+    }
+    playPauseButton.oninput = function () {
+        isPlaying = this.checked;
+    }
+}
 
 function setUpGraphics() {
     canvas = document.getElementById('main-canvas');
@@ -9,6 +32,7 @@ function setUpGraphics() {
     canvas.width = window.innerWidth;
     topPendulum.setBobColor("rgb(255,200,200)");
     bottomPendulum.setAnchor(topPendulum);
+    // bottomPendulum.setMass(80);
 }
 
 function sleep(ms) {
@@ -17,9 +41,11 @@ function sleep(ms) {
 
 async function run() {
     while (true) {
-        moveThings();
+        if (isPlaying) {
+            moveThings();
+        }
         render();
-        await sleep(20);
+        await sleep(pauseTime);
     }
 }
 
@@ -27,8 +53,8 @@ function render() {
     if (canvas.getContext) {
         var ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        topPendulum.renderPath(ctx);
-        bottomPendulum.renderPath(ctx);
+        topPendulum.renderPath(ctx, false, false);
+        bottomPendulum.renderPath(ctx, showDecayCheckbox.checked, showFadeCheckbox.checked);
         bottomPendulum.draw(ctx);
         topPendulum.draw(ctx);
     }
@@ -39,5 +65,6 @@ function moveThings() {
     bottomPendulum.move();
 }
 
+setUpInputs();
 setUpGraphics();
 run();
