@@ -30,6 +30,10 @@ class Bob {
         this.lineColor = color;
     }
     setMass(mass) {
+        this.mass = mass;//This does not conserve momentum.
+    }
+    setMassConserveMomentum(mass) {
+        this.angularVel *= (this.mass / mass);
         this.mass = mass;
     }
     draw(ctx) {
@@ -128,7 +132,13 @@ class Bob {
             this.pathSize++;
         }
     }
-
+    clearPath() {
+        this.path = [];
+    }
+    resetMotion() {
+        this.angularAcc = 0;
+        this.angularVel = 0;
+    }
     degrees_to_radians(degrees) {
         var pi = Math.PI;
         return degrees * (pi / 180);

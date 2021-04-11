@@ -10,19 +10,30 @@ var topMassSlider = document.getElementById("top-mass");
 var bottomMassSlider = document.getElementById("bottom-mass");
 var playPauseButton = document.getElementById("play-pause");
 var isPlaying = playPauseButton.checked;
+var clearPathButton = document.getElementById("clear-path");
+var resetMotionButton = document.getElementById("reset-motion");
+
 
 function setUpInputs() {
     speedSlider.oninput = function () {
         pauseTime = 40 - this.value;
     }
     topMassSlider.oninput = function () {
-        topPendulum.setMass(this.value);
+        topPendulum.setMassConserveMomentum(this.value);
     }
     bottomMassSlider.oninput = function () {
-        bottomPendulum.setMass(this.value);
+        bottomPendulum.setMassConserveMomentum(this.value);
     }
     playPauseButton.oninput = function () {
         isPlaying = this.checked;
+    }
+    clearPathButton.onclick = function () {
+        topPendulum.clearPath();
+        bottomPendulum.clearPath();
+    }
+    resetMotionButton.onclick = function () {
+        topPendulum.resetMotion();
+        bottomPendulum.resetMotion();
     }
 }
 
