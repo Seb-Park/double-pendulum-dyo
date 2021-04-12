@@ -72,16 +72,27 @@ class Bob {
             ctx.stroke();
         }
         else {
-            for (var i = 1; i < this.path.length; i++) {
+            var min = 1;
+            // var trailLength = 10000;
+            // if (showFade) {
+            //     if (this.path.length > trailLength) {
+            //         min = this.path.length - trailLength;
+            //     }
+            // }
+            for (var i = min; i < this.path.length; i++) {
                 ctx.beginPath();
                 ctx.moveTo(this.path[i - 1][0], this.path[i - 1][1]);
                 if (showFade) {
-                    ctx.strokeStyle = `rgba(${i * (255 / this.path.length)},0,${255 - (i * (255 / this.path.length))},${i / this.path.length})`;
+                    let opacity = i / this.path.length;
+                    if (opacity > 0.025) {
+                        ctx.strokeStyle = `rgba(${i * (255 / this.path.length)},0,${255 - (i * (255 / this.path.length))},${opacity})`;
+                        ctx.lineTo(this.path[i][0], this.path[i][1]);
+                    }
                 }
                 else {
                     ctx.strokeStyle = `rgb(${i * (255 / this.path.length)},0,${255 - (i * (255 / this.path.length))})`;
+                    ctx.lineTo(this.path[i][0], this.path[i][1]);
                 }
-                ctx.lineTo(this.path[i][0], this.path[i][1]);
                 ctx.stroke();
             }
         }
