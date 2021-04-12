@@ -12,7 +12,8 @@ var playPauseButton = document.getElementById("play-pause");
 var isPlaying = playPauseButton.checked;
 var clearPathButton = document.getElementById("clear-path");
 var resetMotionButton = document.getElementById("reset-motion");
-
+var topAngleSlider = document.getElementById("top-angle");
+var bottomAngleSlider = document.getElementById("bottom-angle");
 
 function setUpInputs() {
     speedSlider.oninput = function () {
@@ -34,6 +35,27 @@ function setUpInputs() {
     resetMotionButton.onclick = function () {
         topPendulum.resetMotion();
         bottomPendulum.resetMotion();
+    }
+    topAngleSlider.oninput = function () {
+        playPauseButton.checked = false;
+        isPlaying = false;
+        topPendulum.resetMotion();
+        topPendulum.setAngle(this.value);
+        bottomPendulum.setFulcrum(topPendulum.x,topPendulum.y,true);
+    }
+    topAngleSlider.onmouseup = function () {
+        playPauseButton.checked = true;
+        isPlaying = true;
+    }
+    bottomAngleSlider.oninput = function () {
+        playPauseButton.checked = false;
+        isPlaying = false;
+        bottomPendulum.resetMotion();
+        bottomPendulum.setAngle(this.value);
+    }
+    bottomAngleSlider.onmouseup = function () {
+        playPauseButton.checked = true;
+        isPlaying = true;
     }
 }
 

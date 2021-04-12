@@ -36,6 +36,19 @@ class Bob {
         this.angularVel *= (this.mass / mass);
         this.mass = mass;
     }
+    setAngle(angle) {
+        this.angle = this.degrees_to_radians(angle);
+        this.setPositionFromAngle();
+    }
+    setFulcrum(x, y, resetMotion) {
+        if (resetMotion) {
+            this.resetMotion();
+        }
+        this.fulcrumx = x;
+        this.fulcrumy = y;
+        this.x = this.fulcrumx + Math.sin(this.angle) * this.stringLength;
+        this.y = this.fulcrumy + Math.cos(this.angle) * this.stringLength;
+    }
     draw(ctx) {
         ctx.beginPath();
         ctx.moveTo(this.fulcrumx, this.fulcrumy);
