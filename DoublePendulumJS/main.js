@@ -1,9 +1,12 @@
 var canvas;
 var gravityAcc = .5;
 var topPendulum = new Bob(window.innerWidth / 2, window.innerHeight / 2, 180.0, 170, false, gravityAcc);//70 and -50 have been good so far
-var bottomPendulum = new Bob(700, 350, 180.0, 90, false, gravityAcc);
+var bottomPendulum = new Bob(31.25667198004745, -177.26539554219744, 180.0, 90, false, gravityAcc);
+var showTwoCheckbox = document.getElementById("show-two");
+var isShowingTwo = showTwoCheckbox.checked;
 var showDecayCheckbox = document.getElementById("show-decay");
 var showFadeCheckbox = document.getElementById("show-fade");
+var showAuxiliaryCheckbox = document.getElementById("show-auxiliary");
 var speedSlider = document.getElementById("speed-slider");
 var pauseTime = speedSlider.value;
 var topMassSlider = document.getElementById("top-mass");
@@ -24,6 +27,9 @@ function setUpInputs() {
     }
     bottomMassSlider.oninput = function () {
         bottomPendulum.setMassConserveMomentum(this.value);
+        if(topMassSlider.disabled){
+            topMassSlider.disabled = false;
+        }
     }
     playPauseButton.oninput = function () {
         isPlaying = this.checked;
@@ -41,7 +47,7 @@ function setUpInputs() {
         isPlaying = false;
         topPendulum.resetMotion();
         topPendulum.setAngle(this.value);
-        bottomPendulum.setFulcrum(topPendulum.x,topPendulum.y,true);
+        bottomPendulum.setFulcrum(topPendulum.x, topPendulum.y, true);
     }
     topAngleSlider.onmouseup = function () {
         playPauseButton.checked = true;
@@ -56,6 +62,9 @@ function setUpInputs() {
     bottomAngleSlider.onmouseup = function () {
         playPauseButton.checked = true;
         isPlaying = true;
+    }
+    showTwoCheckbox.oninput = function () {
+        isShowingTwo = showTwoCheckbox.checked;
     }
 }
 
@@ -86,10 +95,31 @@ function render() {
     if (canvas.getContext) {
         var ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        topPendulum.renderPath(ctx, false, false);
+        if (isShowingTwo) {
+            topPendulum.renderPath(ctx, false, false);
+        }
         bottomPendulum.renderPath(ctx, showDecayCheckbox.checked, showFadeCheckbox.checked);
-        bottomPendulum.draw(ctx);
-        topPendulum.draw(ctx);
+        if (showAuxiliaryCheckbox.checked) {
+            ctx.beginPath();
+            ctx.strokeStyle = "rgba(0,255,255,.5)"
+            ctx.setLineDash([10, 15])
+            ctx.moveTo(topPendulum.fulcrumx, topPendulum.fulcrumy);
+            ctx.lineTo(bottomPendulum.x, bottomPendulum.y);
+            ctx.stroke();
+
+            ctx.setLineDash([]);
+
+            if (!isShowingTwo) {
+                var circle = new Path2D();
+                ctx.fillStyle = bottomPendulum.bobColor;
+                circle.arc(bottomPendulum.x, bottomPendulum.y, bottomPendulum.mass, 0, 2 * Math.PI);
+                ctx.fill(circle);
+            }
+        }
+        if (isShowingTwo) {
+            bottomPendulum.draw(ctx);
+            topPendulum.draw(ctx);
+        }
     }
 }
 

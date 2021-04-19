@@ -1,5 +1,6 @@
 class Bob {
     constructor(pfulcrumx, pfulcrumy, plength, pangle, isRadians, pgravity) {
+        this.hasStarted = false;
         this.fulcrumx = pfulcrumx;
         this.fulcrumy = pfulcrumy;
         this.stringLength = plength;
@@ -22,6 +23,12 @@ class Bob {
         this.lineColor = "rgb(0,0,0)";
         this.bobColor = "rgba(0,0,0,0.5)";
         this.mass = 20;
+        this.hasChangedMass = false;
+        this.terminalAngularVelocity = 500;
+        console.log(this.x, this.y)
+    }
+    setTerminalVelocity(vel) {
+        this.terminalAngularVelocity = vel;
     }
     setBobColor(color) {
         this.bobColor = color;
@@ -31,10 +38,12 @@ class Bob {
     }
     setMass(mass) {
         this.mass = mass;//This does not conserve momentum.
+        this.hasChangedMass = true;
     }
     setMassConserveMomentum(mass) {
         this.angularVel *= (this.mass / mass);
         this.mass = mass;
+        this.hasChangedMass = true;
     }
     setAngle(angle) {
         this.angle = this.degrees_to_radians(angle);
@@ -62,38 +71,40 @@ class Bob {
         ctx.fill(circle);
     }
     renderPath(ctx, showDecay, showFade) {
-        ctx.beginPath();
-        ctx.strokeStyle = this.bobColor;
-        if (!showDecay) {
-            ctx.moveTo(this.path[0][0], this.path[0][1]);
-            for (var i = 1; i < this.path.length; i++) {
-                ctx.lineTo(this.path[i][0], this.path[i][1]);
-            }
-            ctx.stroke();
-        }
-        else {
-            var min = 1;
-            // var trailLength = 10000;
-            // if (showFade) {
-            //     if (this.path.length > trailLength) {
-            //         min = this.path.length - trailLength;
-            //     }
-            // }
-            for (var i = min; i < this.path.length; i++) {
-                ctx.beginPath();
-                ctx.moveTo(this.path[i - 1][0], this.path[i - 1][1]);
-                if (showFade) {
-                    let opacity = i / this.path.length;
-                    if (opacity > 0.025) {
-                        ctx.strokeStyle = `rgba(${i * (255 / this.path.length)},0,${255 - (i * (255 / this.path.length))},${opacity})`;
-                        ctx.lineTo(this.path[i][0], this.path[i][1]);
-                    }
-                }
-                else {
-                    ctx.strokeStyle = `rgb(${i * (255 / this.path.length)},0,${255 - (i * (255 / this.path.length))})`;
+        if (this.path.length > 0) {
+            ctx.beginPath();
+            ctx.strokeStyle = this.bobColor;
+            if (!showDecay) {
+                ctx.moveTo(this.path[0][0], this.path[0][1]);
+                for (var i = 1; i < this.path.length; i++) {
                     ctx.lineTo(this.path[i][0], this.path[i][1]);
                 }
                 ctx.stroke();
+            }
+            else {
+                var min = 1;
+                // var trailLength = 10000;
+                // if (showFade) {
+                //     if (this.path.length > trailLength) {
+                //         min = this.path.length - trailLength;
+                //     }
+                // }
+                for (var i = min; i < this.path.length; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(this.path[i - 1][0], this.path[i - 1][1]);
+                    if (showFade) {
+                        let opacity = i / this.path.length;
+                        if (opacity > 0.025) {
+                            ctx.strokeStyle = `rgba(${i * (255 / this.path.length)},0,${255 - (i * (255 / this.path.length))},${opacity})`;
+                            ctx.lineTo(this.path[i][0], this.path[i][1]);
+                        }
+                    }
+                    else {
+                        ctx.strokeStyle = `rgb(${i * (255 / this.path.length)},0,${255 - (i * (255 / this.path.length))})`;
+                        ctx.lineTo(this.path[i][0], this.path[i][1]);
+                    }
+                    ctx.stroke();
+                }
             }
         }
     }
@@ -141,9 +152,10 @@ class Bob {
 
     move() {
         this.calculateAcceleration();
-        this.angularVel += this.angularAcc;
+        if (this.angularVel <= this.terminalAngularVelocity) {
+            this.angularVel += this.angularAcc;
+        }
         this.angle += this.angularVel;
-
         this.setPositionFromAngle();
 
         if (this.anchored) {
@@ -155,6 +167,11 @@ class Bob {
         if (this.pathSize < this.maxPoints) {
             this.pathSize++;
         }
+
+        if (!this.hasStarted) {
+            this.clearPath();
+            this.hasStarted = true;
+        }
     }
     clearPath() {
         this.path = [];
@@ -162,6 +179,7 @@ class Bob {
     resetMotion() {
         this.angularAcc = 0;
         this.angularVel = 0;
+        this.calculateAcceleration();
     }
     degrees_to_radians(degrees) {
         var pi = Math.PI;
