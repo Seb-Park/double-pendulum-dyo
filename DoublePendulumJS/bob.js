@@ -151,7 +151,7 @@ class Bob {
     }
 
     move() {
-        this.calculateAcceleration();
+        // this.calculateAcceleration();
         if (this.angularVel <= this.terminalAngularVelocity) {
             this.angularVel += this.angularAcc;
         }
@@ -171,6 +171,11 @@ class Bob {
         if (!this.hasStarted) {
             this.clearPath();
             this.hasStarted = true;
+        }
+
+        if(this.angularAcc>Infinity||this.angularVel>Infinity){
+            this.resetMotion();
+            console.log("error: euler's method exceeded infinity");
         }
     }
     clearPath() {

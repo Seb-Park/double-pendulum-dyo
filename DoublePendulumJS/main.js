@@ -4,6 +4,8 @@ var topPendulum = new Bob(window.innerWidth / 2, window.innerHeight / 2, 180.0, 
 var bottomPendulum = new Bob(31.25667198004745, -177.26539554219744, 180.0, 90, false, gravityAcc);
 var showTwoCheckbox = document.getElementById("show-two");
 var isShowingTwo = showTwoCheckbox.checked;
+var showTrailCheckbox = document.getElementById("show-trail");
+var isShowingTrail = showTrailCheckbox.checked;
 var showDecayCheckbox = document.getElementById("show-decay");
 var showFadeCheckbox = document.getElementById("show-fade");
 var showAuxiliaryCheckbox = document.getElementById("show-auxiliary");
@@ -27,7 +29,7 @@ function setUpInputs() {
     }
     bottomMassSlider.oninput = function () {
         bottomPendulum.setMassConserveMomentum(this.value);
-        if(topMassSlider.disabled){
+        if (topMassSlider.disabled) {
             topMassSlider.disabled = false;
         }
     }
@@ -66,6 +68,11 @@ function setUpInputs() {
     showTwoCheckbox.oninput = function () {
         isShowingTwo = showTwoCheckbox.checked;
     }
+    showTrailCheckbox.oninput = function () {
+        isShowingTrail = this.checked;
+        showDecayCheckbox.disabled = !this.checked;
+        showFadeCheckbox.disabled = !this.checked;
+    }
 }
 
 function setUpGraphics() {
@@ -95,10 +102,12 @@ function render() {
     if (canvas.getContext) {
         var ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (isShowingTwo) {
-            topPendulum.renderPath(ctx, false, false);
+        if (isShowingTrail) {
+            if (isShowingTwo) {
+                topPendulum.renderPath(ctx, false, false);
+            }
+            bottomPendulum.renderPath(ctx, showDecayCheckbox.checked, showFadeCheckbox.checked);
         }
-        bottomPendulum.renderPath(ctx, showDecayCheckbox.checked, showFadeCheckbox.checked);
         if (showAuxiliaryCheckbox.checked) {
             ctx.beginPath();
             ctx.strokeStyle = "rgba(0,255,255,.5)"
@@ -124,6 +133,8 @@ function render() {
 }
 
 function moveThings() {
+    topPendulum.calculateAcceleration();
+    bottomPendulum.calculateAcceleration();
     topPendulum.move();
     bottomPendulum.move();
 }
