@@ -167,13 +167,14 @@ function updateGraph() {
     var valueToPush;
     switch (graphType) {
         case "p1theta":
-            valueToPush = Bob.radians_to_degrees(topPendulum.angle);
+            valueToPush = Bob.degrees_360_to_180(Bob.radians_to_degrees(topPendulum.angle));
             break;
         case "p2theta":
-            valueToPush = Bob.radians_to_degrees(Math.asin(Math.sin(bottomPendulum.angle)));
+            valueToPush = Bob.degrees_360_to_180(Bob.radians_to_degrees(Math.asin(Math.sin(bottomPendulum.angle))));
             break
         default:
-            valueToPush = Bob.radians_to_degrees(Math.asin(Math.sin(getAuxiliaryAngle())));
+            valueToPush = Bob.degrees_360_to_180(Bob.radians_to_degrees(Math.asin(Math.sin(getAuxiliaryAngle()))));
+            console.log(valueToPush);
             break;
     }
     if (Math.abs(valueToPush) > maxGraphVal) {
@@ -187,8 +188,8 @@ function updateGraph() {
     renderGraph();
 }
 
-function getAuxiliaryAngle(){
-    return Math.atan((bottomPendulum.x - topPendulum.fulcrumx)/(bottomPendulum.y-topPendulum.fulcrumy))
+function getAuxiliaryAngle() {
+    return Math.atan((bottomPendulum.x - topPendulum.fulcrumx) / (bottomPendulum.y - topPendulum.fulcrumy))
 }
 
 function renderGraph() {
@@ -198,16 +199,17 @@ function renderGraph() {
         ctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
         ctx.beginPath();
         if (graphVals.length < graphCanvas.width) {
-            ctx.moveTo(0, (-graphVals[0] / maxGraphVal) * graphCanvas.height / 2 + midpoint);
-            for (let i = 0; i < graphCanvas.width; i++) {
-                let valToGraph = (-graphVals[i] / maxGraphVal) * graphCanvas.height / 2 + midpoint
+            ctx.moveTo(0, (-graphVals[0] / maxGraphVal) * graphCanvas.height / 2 + (graphCanvas.height/2));
+            for (let i = 0; i < graphVals.length; i++) {
+                let valToGraph = (-graphVals[i] / maxGraphVal) * graphCanvas.height / 2 + (graphCanvas.height/2);
                 ctx.lineTo(i, valToGraph);
             }
         }
         else {
-            ctx.moveTo(0, (-graphVals[graphVals.length - graphCanvas.width + 1] / maxGraphVal) * graphCanvas.height / 2 + midpoint);
+            ctx.moveTo(0, (-graphVals[graphVals.length - graphCanvas.width] / maxGraphVal) * graphCanvas.height / 2 + (graphCanvas.height/2));
             for (let i = graphCanvas.width - 1; i >= 0; i--) {
-                ctx.lineTo(graphCanvas.width - i, (-graphVals[graphVals.length - i] / maxGraphVal) * graphCanvas.height / 2 + midpoint);
+                let valToGraph = (-graphVals[graphVals.length - i] / maxGraphVal) * graphCanvas.height / 2 + (graphCanvas.height/2);
+                ctx.lineTo(graphCanvas.width - i, valToGraph);
             }
         }
         ctx.stroke();

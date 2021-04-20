@@ -195,4 +195,10 @@ class Bob {
         var pi = Math.PI;
         return (radians / (pi / 180)) % 360;
     }
+    static degrees_360_to_180(degrees){
+        if(degrees<=180){
+            return degrees;
+        }
+        return degrees - 360;
+    }
 }
