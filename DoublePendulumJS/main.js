@@ -198,6 +198,7 @@ function renderGraph() {
         var ctx = graphCanvas.getContext('2d');
         ctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
         ctx.beginPath();
+        ctx.strokeStyle="rgb(50,255,0)";
         if (graphVals.length < graphCanvas.width) {
             ctx.moveTo(0, (-graphVals[0] / maxGraphVal) * graphCanvas.height / 2 + (graphCanvas.height/2));
             for (let i = 0; i < graphVals.length; i++) {
