@@ -7,7 +7,7 @@ class Bob {
         if (isRadians) {
             this.angle = pangle;
         } else {
-            this.angle = this.degrees_to_radians(pangle);
+            this.angle = Bob.degrees_to_radians(pangle);
         }
         this.maxAngle = this.angle;
         this.x = Math.sin(this.angle) * this.stringLength;
@@ -46,7 +46,7 @@ class Bob {
         this.hasChangedMass = true;
     }
     setAngle(angle) {
-        this.angle = this.degrees_to_radians(angle);
+        this.angle = Bob.degrees_to_radians(angle);
         this.setPositionFromAngle();
     }
     setFulcrum(x, y, resetMotion) {
@@ -74,6 +74,7 @@ class Bob {
         if (this.path.length > 0) {
             ctx.beginPath();
             ctx.strokeStyle = this.bobColor;
+            // ctx.lineJoin = "round";
             if (!showDecay) {
                 ctx.moveTo(this.path[0][0], this.path[0][1]);
                 for (var i = 1; i < this.path.length; i++) {
@@ -186,8 +187,12 @@ class Bob {
         this.angularVel = 0;
         this.calculateAcceleration();
     }
-    degrees_to_radians(degrees) {
+    static degrees_to_radians(degrees) {
         var pi = Math.PI;
         return degrees * (pi / 180);
+    }
+    static radians_to_degrees(radians) {
+        var pi = Math.PI;
+        return (radians / (pi / 180)) % 360;
     }
 }

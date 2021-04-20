@@ -1,12 +1,17 @@
 var canvas;
+var graphCanvas;
 var gravityAcc = .5;
-var topPendulum = new Bob(window.innerWidth / 2, window.innerHeight / 2, 180.0, 170, false, gravityAcc);//70 and -50 have been good so far
-var bottomPendulum = new Bob(31.25667198004745, -177.26539554219744, 180.0, 90, false, gravityAcc);
+var graphVals = [];
+var maxGraphVal = 0, minGraphVal = 0;
+var topPendulum = new Bob(window.innerWidth / 4, window.innerHeight / 2, 170.0, 70, false, gravityAcc);//170, 90 and 70 and -50 have been good so far
+var bottomPendulum = new Bob(31.25667198004745, -177.26539554219744, 170.0, 90, false, gravityAcc);
 var showTwoCheckbox = document.getElementById("show-two");
 var isShowingTwo = showTwoCheckbox.checked;
 var showTrailCheckbox = document.getElementById("show-trail");
 var isShowingTrail = showTrailCheckbox.checked;
 var showDecayCheckbox = document.getElementById("show-decay");
+var bobColor1Picker = document.getElementById("bob-color-1");
+var bobColor2Picker = document.getElementById("bob-color-2");
 var showFadeCheckbox = document.getElementById("show-fade");
 var showAuxiliaryCheckbox = document.getElementById("show-auxiliary");
 var speedSlider = document.getElementById("speed-slider");
@@ -19,6 +24,8 @@ var clearPathButton = document.getElementById("clear-path");
 var resetMotionButton = document.getElementById("reset-motion");
 var topAngleSlider = document.getElementById("top-angle");
 var bottomAngleSlider = document.getElementById("bottom-angle");
+var graphTypeSelector = document.getElementById("graph-type");
+var graphType = graphTypeSelector.value;
 
 function setUpInputs() {
     speedSlider.oninput = function () {
@@ -67,18 +74,34 @@ function setUpInputs() {
     }
     showTwoCheckbox.oninput = function () {
         isShowingTwo = showTwoCheckbox.checked;
+        bobColor1Picker.disabled = !this.checked;
+        bobColor2Picker.disabled = !this.checked;
     }
     showTrailCheckbox.oninput = function () {
         isShowingTrail = this.checked;
         showDecayCheckbox.disabled = !this.checked;
         showFadeCheckbox.disabled = !this.checked;
     }
+    bobColor1Picker.oninput = function () {
+        topPendulum.setBobColor(this.value);
+    }
+    bobColor2Picker.oninput = function () {
+        bottomPendulum.setBobColor(this.value + "80");
+    }
+    graphTypeSelector.oninput = function () {
+        graphVals = [];
+        maxGraphVal = 0;
+        graphType = this.value;
+    }
 }
 
 function setUpGraphics() {
     canvas = document.getElementById('main-canvas');
     canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
+    canvas.width = window.innerWidth / 2;
+    graphCanvas = document.getElementById('graph-canvas');
+    graphCanvas.width = window.innerWidth / 4;
+    graphCanvas.height = "200";//"100px";
     topPendulum.setBobColor("rgb(255,200,200)");
     bottomPendulum.setAnchor(topPendulum);
     // bottomPendulum.setMass(80);
@@ -92,6 +115,7 @@ async function run() {
     while (true) {
         if (isPlaying) {
             moveThings();
+            updateGraph();
         }
         render();
         await sleep(pauseTime);
@@ -137,6 +161,57 @@ function moveThings() {
     bottomPendulum.calculateAcceleration();
     topPendulum.move();
     bottomPendulum.move();
+}
+
+function updateGraph() {
+    var valueToPush;
+    switch (graphType) {
+        case "p1theta":
+            valueToPush = Bob.radians_to_degrees(topPendulum.angle);
+            break;
+        case "p2theta":
+            valueToPush = Bob.radians_to_degrees(Math.asin(Math.sin(bottomPendulum.angle)));
+            break
+        default:
+            valueToPush = Bob.radians_to_degrees(Math.asin(Math.sin(getAuxiliaryAngle())));
+            break;
+    }
+    if (Math.abs(valueToPush) > maxGraphVal) {
+        maxGraphVal = Math.abs(valueToPush);
+        console.log(maxGraphVal);
+    }
+    // if (valueToPush < minGraphVal){
+    //     minGraphVal = valueToPush;
+    // }
+    graphVals.push(valueToPush);
+    renderGraph();
+}
+
+function getAuxiliaryAngle(){
+    return Math.atan((bottomPendulum.x - topPendulum.fulcrumx)/(bottomPendulum.y-topPendulum.fulcrumy))
+}
+
+function renderGraph() {
+    if (graphCanvas.getContext) {
+        let midpoint = maxGraphVal;//(maxGraphVal - minGraphVal)/2;
+        var ctx = graphCanvas.getContext('2d');
+        ctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+        ctx.beginPath();
+        if (graphVals.length < graphCanvas.width) {
+            ctx.moveTo(0, (-graphVals[0] / maxGraphVal) * graphCanvas.height / 2 + midpoint);
+            for (let i = 0; i < graphCanvas.width; i++) {
+                let valToGraph = (-graphVals[i] / maxGraphVal) * graphCanvas.height / 2 + midpoint
+                ctx.lineTo(i, valToGraph);
+            }
+        }
+        else {
+            ctx.moveTo(0, (-graphVals[graphVals.length - graphCanvas.width + 1] / maxGraphVal) * graphCanvas.height / 2 + midpoint);
+            for (let i = graphCanvas.width - 1; i >= 0; i--) {
+                ctx.lineTo(graphCanvas.width - i, (-graphVals[graphVals.length - i] / maxGraphVal) * graphCanvas.height / 2 + midpoint);
+            }
+        }
+        ctx.stroke();
+    }
 }
 
 setUpInputs();

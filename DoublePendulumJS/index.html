@@ -1,31 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Double Pendulum</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <canvas id="main-canvas"></canvas>
-    <input type="checkbox" name="show-two" id="show-two" checked>
-    <label for="show-two">Show Pendulum</label>
-    <input type="checkbox" name="show-trail" id="show-trail" checked>
-    <label for="show-trail">Show Trail</label>
-    <input type="checkbox" name="show-decay" id="show-decay">
-    <input type="checkbox" name="show-fade" id="show-fade">
-    <input type="checkbox" name="show-auxiliary" id="show-auxiliary">
-    <label for="show-auxiliary">Show Auxiliary</label>
-    <input type="range" name="speed" id="speed-slider" value="20" max="40" min="0">
-    <input type="range" name="top-mass" id="top-mass" value="20" max="40" min="3" disabled>
-    <input type="range" name="bottom-mass" id="bottom-mass" value="20" max="40" min="3">
-    <input type="checkbox" name="play-pause" id="play-pause" checked>
-    <input type="range" name="top-angle" id="top-angle" value="0" max="180" min="-180">
-    <input type="range" name="bottom-angle" id="bottom-angle" value="0" max="180" min="-180">
-    <button id="clear-path">Clear Path</button>
-    <button id="reset-motion">Reset Motion</button>
+    <div class="page-content">
+        <div class="control-panel">
+            <input type="checkbox" name="show-two" id="show-two" checked>
+            <label for="show-two">Show Pendulum</label>
+            <br>
+            <input type="color" name="bob-color-1" id="bob-color-1" value="#ffc8c8">
+            <input type="color" name="bob-color-2" id="bob-color-2" value="#000000">
+            <br>
+            <input type="checkbox" name="show-trail" id="show-trail" checked>
+            <label for="show-trail">Show Trail</label>
+            <br>
+            <input type="checkbox" name="show-decay" id="show-decay">
+            <label for="show-decay">Show Color Decay</label>
+            <br>
+            <input type="checkbox" name="show-fade" id="show-fade">
+            <label for="show-fade">Fade Path</label>
+            <br>
+            <input type="checkbox" name="show-auxiliary" id="show-auxiliary">
+            <label for="show-auxiliary">Show Auxiliary</label>
+            <br>
+            <input type="range" name="speed-slider" id="speed-slider" value="20" max="40" min="0">
+            <label for="speed">Simulation Speed</label>
+            <br>
+            <input type="range" name="top-mass" id="top-mass" value="20" max="40" min="3" disabled>
+            <label for="top-mass">Top Mass</label>
+            <br>
+            <input type="range" name="bottom-mass" id="bottom-mass" value="20" max="40" min="3">
+            <label for="bottom-mass">Bottom Mass</label>
+            <br>
+            <input type="range" name="top-angle" id="top-angle" value="0" max="180" min="-180">
+            <label for="top-angle">θ₁</label>
+            <br>
+            <input type="range" name="bottom-angle" id="bottom-angle" value="0" max="180" min="-180">
+            <label for="top-angle">θ₂</label>
+            <br>
+            <input type="checkbox" name="play-pause" id="play-pause" checked>
+            <button id="clear-path">Clear Path</button>
+            <button id="reset-motion">Reset Motion</button>
+            <br>
+            <canvas id="graph-canvas"></canvas>
+            <select name="graph-type" id="graph-type">
+                <option value="p1theta">Pendulum 1 Angle</option>
+                <option value="p2theta">Pendulum 2 Angle</option>
+                <option value="atheta">Composite Angle</option>
+            </select>
+        </div>
+        <canvas id="main-canvas"></canvas>
+    </div>
 </body>
 <script src="bob.js"></script>
 <script src="main.js"></script>
+
 </html>
