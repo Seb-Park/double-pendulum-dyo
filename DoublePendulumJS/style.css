@@ -6,10 +6,17 @@ html, body{
     width: 25%;
 }
 
+.canvas-container{
+    display: flex;
+    justify-content: center;
+}
+
 #main-canvas{
     /* height: 100vh;
     width: 100vh; */
     /* width: 30%; */
+    /* right: 10px;
+    position: absolute; */
 }
 
 #graph-canvas{
