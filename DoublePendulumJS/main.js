@@ -98,7 +98,13 @@ function setUpInputs() {
 function setUpGraphics() {
     canvas = document.getElementById('main-canvas');
     canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth / 2;
+    // if (window.innerWidth > 1200) {
+        canvas.width = window.innerWidth / 2;
+    // }
+    // else {
+        canvas.width = window.innerWidth / 1.2;
+        console.log("not big enough")
+    // }
     graphCanvas = document.getElementById('graph-canvas');
     graphCanvas.width = window.innerWidth / 4;
     graphCanvas.height = "200";//"100px";
@@ -198,18 +204,18 @@ function renderGraph() {
         var ctx = graphCanvas.getContext('2d');
         ctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
         ctx.beginPath();
-        ctx.strokeStyle="rgb(50,255,0)";
+        ctx.strokeStyle = "rgb(50,255,0)";
         if (graphVals.length < graphCanvas.width) {
-            ctx.moveTo(0, (-graphVals[0] / maxGraphVal) * graphCanvas.height / 2 + (graphCanvas.height/2));
+            ctx.moveTo(0, (-graphVals[0] / maxGraphVal) * graphCanvas.height / 2 + (graphCanvas.height / 2));
             for (let i = 0; i < graphVals.length; i++) {
-                let valToGraph = (-graphVals[i] / maxGraphVal) * graphCanvas.height / 2 + (graphCanvas.height/2);
+                let valToGraph = (-graphVals[i] / maxGraphVal) * graphCanvas.height / 2 + (graphCanvas.height / 2);
                 ctx.lineTo(i, valToGraph);
             }
         }
         else {
-            ctx.moveTo(0, (-graphVals[graphVals.length - graphCanvas.width] / maxGraphVal) * graphCanvas.height / 2 + (graphCanvas.height/2));
+            ctx.moveTo(0, (-graphVals[graphVals.length - graphCanvas.width] / maxGraphVal) * graphCanvas.height / 2 + (graphCanvas.height / 2));
             for (let i = graphCanvas.width - 1; i >= 0; i--) {
-                let valToGraph = (-graphVals[graphVals.length - i] / maxGraphVal) * graphCanvas.height / 2 + (graphCanvas.height/2);
+                let valToGraph = (-graphVals[graphVals.length - i] / maxGraphVal) * graphCanvas.height / 2 + (graphCanvas.height / 2);
                 ctx.lineTo(graphCanvas.width - i, valToGraph);
             }
         }
