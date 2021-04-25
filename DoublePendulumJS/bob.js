@@ -25,7 +25,7 @@ class Bob {
         this.mass = 20;
         this.hasChangedMass = false;
         this.terminalAngularVelocity = 500;
-        console.log(this.x, this.y)
+        // console.log(this.x, this.y)
     }
     setTerminalVelocity(vel) {
         this.terminalAngularVelocity = vel;

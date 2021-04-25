@@ -12,11 +12,12 @@ html, body{
 }
 
 #main-canvas{
+    right: 0px;
     /* height: 100vh;
     width: 100vh; */
     /* width: 30%; */
-    /* right: 10px;
-    position: absolute; */
+    /* right: 10px; */
+    /* position: absolute; */
 }
 
 #graph-canvas{

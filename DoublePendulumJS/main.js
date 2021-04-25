@@ -26,6 +26,7 @@ var topAngleSlider = document.getElementById("top-angle");
 var bottomAngleSlider = document.getElementById("bottom-angle");
 var graphTypeSelector = document.getElementById("graph-type");
 var graphType = graphTypeSelector.value;
+var wasPlaying = true;
 
 function setUpInputs() {
     speedSlider.oninput = function () {
@@ -51,6 +52,10 @@ function setUpInputs() {
         topPendulum.resetMotion();
         bottomPendulum.resetMotion();
     }
+    topAngleSlider.onmousedown = function()
+    {
+        wasPlaying = isPlaying;
+    }
     topAngleSlider.oninput = function () {
         playPauseButton.checked = false;
         isPlaying = false;
@@ -59,8 +64,12 @@ function setUpInputs() {
         bottomPendulum.setFulcrum(topPendulum.x, topPendulum.y, true);
     }
     topAngleSlider.onmouseup = function () {
-        playPauseButton.checked = true;
-        isPlaying = true;
+        playPauseButton.checked = wasPlaying;
+        isPlaying = playPauseButton.checked;
+    }
+    bottomAngleSlider.onmousedown = function()
+    {
+        wasPlaying = isPlaying;
     }
     bottomAngleSlider.oninput = function () {
         playPauseButton.checked = false;
@@ -69,8 +78,8 @@ function setUpInputs() {
         bottomPendulum.setAngle(this.value);
     }
     bottomAngleSlider.onmouseup = function () {
-        playPauseButton.checked = true;
-        isPlaying = true;
+        playPauseButton.checked = wasPlaying;
+        isPlaying = playPauseButton.checked;
     }
     showTwoCheckbox.oninput = function () {
         isShowingTwo = showTwoCheckbox.checked;
@@ -180,12 +189,10 @@ function updateGraph() {
             break
         default:
             valueToPush = Bob.degrees_360_to_180(Bob.radians_to_degrees(Math.asin(Math.sin(getAuxiliaryAngle()))));
-            console.log(valueToPush);
             break;
     }
     if (Math.abs(valueToPush) > maxGraphVal) {
         maxGraphVal = Math.abs(valueToPush);
-        console.log(maxGraphVal);
     }
     // if (valueToPush < minGraphVal){
     //     minGraphVal = valueToPush;
