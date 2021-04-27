@@ -38,12 +38,14 @@ class Bob {
     }
     setMass(mass) {
         this.mass = mass;//This does not conserve momentum.
-        this.hasChangedMass = true;
+        // this.hasChangedMass = true;
     }
     setMassConserveMomentum(mass) {
         this.angularVel *= (this.mass / mass);
-        this.mass = mass;
-        this.hasChangedMass = true;
+        // this.mass = mass;
+        // console.log(mass);
+        this.mass = parseInt(mass.toString());//No idea why but this prevents the bug where thing just turns into sine wave.
+        // this.hasChangedMass = true;
     }
     setAngle(angle) {
         this.angle = Bob.degrees_to_radians(angle);
@@ -140,7 +142,7 @@ class Bob {
             let c = this.child;
             this.angularAcc = (-this.gravity * (2 * this.mass + c.mass) * Math.sin(this.angle) - c.mass * this.gravity * Math.sin(this.angle - 2 * c.angle) - 2 * Math.sin(this.angle - c.angle) * c.mass * (Math.pow(c.angularVel, 2) * c.stringLength + Math.pow(this.angularVel, 2) * this.stringLength * Math.cos(this.angle - c.angle))) /
                 (this.stringLength * (2 * this.mass + c.mass - c.mass * Math.cos(2 * this.angle - 2 * c.angle)));
-        }
+            }
         else if (this.anchored) {
             let p = this.parent;
             this.angularAcc = (2 * Math.sin(p.angle - this.angle) * (Math.pow(p.angularVel, 2) * p.stringLength * (p.mass + this.mass) + this.gravity * (p.mass + this.mass) * Math.cos(p.angle) + Math.pow(this.angularVel, 2) * this.stringLength * this.mass * Math.cos(p.angle - this.angle))) /

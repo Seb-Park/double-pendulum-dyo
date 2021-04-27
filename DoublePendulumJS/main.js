@@ -3,6 +3,7 @@ var graphCanvas;
 var gravityAcc = .5;
 var graphVals = [];
 var maxGraphVal = 0, minGraphVal = 0;
+var graphMaxText = document.getElementById("max-val"), graphMinText = document.getElementById("min-val");
 var topPendulum = new Bob(window.innerWidth / 4, window.innerHeight / 2, 170.0, 70, false, gravityAcc);//170, 90 and 70 and -50 have been good so far
 var bottomPendulum = new Bob(31.25667198004745, -177.26539554219744, 170.0, 90, false, gravityAcc);
 var showTwoCheckbox = document.getElementById("show-two");
@@ -27,6 +28,10 @@ var bottomAngleSlider = document.getElementById("bottom-angle");
 var graphTypeSelector = document.getElementById("graph-type");
 var graphType = graphTypeSelector.value;
 var wasPlaying = true;
+var theta1label = document.getElementById("theta-1");
+var theta2label = document.getElementById("theta-2");
+var simulationTime = 0;
+var simulationTimeText = document.getElementById("sim-time");
 
 function setUpInputs() {
     speedSlider.oninput = function () {
@@ -45,15 +50,16 @@ function setUpInputs() {
         isPlaying = this.checked;
     }
     clearPathButton.onclick = function () {
+        simulationTime = 0;
         topPendulum.clearPath();
         bottomPendulum.clearPath();
     }
     resetMotionButton.onclick = function () {
+        simulationTime = 0;
         topPendulum.resetMotion();
         bottomPendulum.resetMotion();
     }
-    topAngleSlider.onmousedown = function()
-    {
+    topAngleSlider.onmousedown = function () {
         wasPlaying = isPlaying;
     }
     topAngleSlider.oninput = function () {
@@ -62,13 +68,13 @@ function setUpInputs() {
         topPendulum.resetMotion();
         topPendulum.setAngle(this.value);
         bottomPendulum.setFulcrum(topPendulum.x, topPendulum.y, true);
+        theta1label.innerHTML = "θ₁: " + this.value;
     }
     topAngleSlider.onmouseup = function () {
         playPauseButton.checked = wasPlaying;
         isPlaying = playPauseButton.checked;
     }
-    bottomAngleSlider.onmousedown = function()
-    {
+    bottomAngleSlider.onmousedown = function () {
         wasPlaying = isPlaying;
     }
     bottomAngleSlider.oninput = function () {
@@ -76,6 +82,7 @@ function setUpInputs() {
         isPlaying = false;
         bottomPendulum.resetMotion();
         bottomPendulum.setAngle(this.value);
+        theta2label.innerHTML = "θ₂: " + this.value;
     }
     bottomAngleSlider.onmouseup = function () {
         playPauseButton.checked = wasPlaying;
@@ -108,11 +115,11 @@ function setUpGraphics() {
     canvas = document.getElementById('main-canvas');
     canvas.height = window.innerHeight;
     // if (window.innerWidth > 1200) {
-        canvas.width = window.innerWidth / 2;
+    canvas.width = window.innerWidth / 2;
     // }
     // else {
-        canvas.width = window.innerWidth / 1.2;
-        console.log("not big enough")
+    canvas.width = window.innerWidth / 1.2;
+    console.log("not big enough")
     // }
     graphCanvas = document.getElementById('graph-canvas');
     graphCanvas.width = window.innerWidth / 4;
@@ -131,6 +138,7 @@ async function run() {
         if (isPlaying) {
             moveThings();
             updateGraph();
+            simulationTime += .02;
         }
         render();
         await sleep(pauseTime);
@@ -187,9 +195,24 @@ function updateGraph() {
         case "p2theta":
             valueToPush = Bob.degrees_360_to_180(Bob.radians_to_degrees(Math.asin(Math.sin(bottomPendulum.angle))));
             break
-        default:
-            valueToPush = Bob.degrees_360_to_180(Bob.radians_to_degrees(Math.asin(Math.sin(getAuxiliaryAngle()))));
+        case "atheta":
+            valueToPush = Bob.degrees_360_to_180(Bob.radians_to_degrees(Math.atan(Math.tan(getAuxiliaryAngle()))));
             break;
+        case "p1vel":
+            valueToPush = topPendulum.angularVel;
+            break
+        case "p2vel":
+            valueToPush = bottomPendulum.angularVel;
+            break
+        case "p1acc":
+            valueToPush = topPendulum.angularAcc;
+            break
+        case "p2acc":
+            valueToPush = bottomPendulum.angularAcc;
+            break
+        case "auxLen":
+            valueToPush = Math.sqrt(Math.pow(topPendulum.fulcrumx - bottomPendulum.x, 2) + Math.pow(topPendulum.fulcrumy - bottomPendulum.y, 2));
+            break
     }
     if (Math.abs(valueToPush) > maxGraphVal) {
         maxGraphVal = Math.abs(valueToPush);
@@ -199,6 +222,7 @@ function updateGraph() {
     // }
     graphVals.push(valueToPush);
     renderGraph();
+    simulationTimeText.innerHTML = "t = " + (Math.round(simulationTime * 10) / 10).toString();
 }
 
 function getAuxiliaryAngle() {
@@ -228,6 +252,8 @@ function renderGraph() {
         }
         ctx.stroke();
     }
+    graphMaxText.innerHTML = maxGraphVal;
+    graphMinText.innerHTML = -maxGraphVal;
 }
 
 setUpInputs();

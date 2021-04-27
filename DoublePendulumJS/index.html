@@ -35,28 +35,36 @@
             <input type="range" name="speed-slider" id="speed-slider" value="20" max="40" min="0">
             <label for="speed">Simulation Speed</label>
             <br>
-            <input type="range" name="top-mass" id="top-mass" value="20" max="40" min="3" disabled>
+            <input type="range" name="top-mass" id="top-mass" value="20" max="40" min="3" <!--disabled-->
             <label for="top-mass">Top Mass</label>
             <br>
             <input type="range" name="bottom-mass" id="bottom-mass" value="20" max="40" min="3">
             <label for="bottom-mass">Bottom Mass</label>
             <br>
             <input type="range" name="top-angle" id="top-angle" value="0" max="180" min="-180">
-            <label for="top-angle">θ₁</label>
+            <label for="top-angle" id="theta-1">θ₁</label>
             <br>
             <input type="range" name="bottom-angle" id="bottom-angle" value="0" max="180" min="-180">
-            <label for="top-angle">θ₂</label>
+            <label for="top-angle" id="theta-2">θ₂</label>
             <br>
             <input type="checkbox" name="play-pause" id="play-pause" checked>
             <button id="clear-path">Clear Path</button>
             <button id="reset-motion">Reset Motion</button>
             <br>
+            <div id="max-val">max</div>
             <canvas id="graph-canvas"></canvas>
+            <div id="min-val">min</div>
             <select name="graph-type" id="graph-type">
                 <option value="p1theta">Pendulum 1 Angle</option>
                 <option value="p2theta">Pendulum 2 Angle</option>
                 <option value="atheta">Composite Angle</option>
+                <option value="p1vel">Pendulum 1 Velocity</option>
+                <option value="p2vel">Pendulum 2 Velocity</option>
+                <option value="p1acc">Pendulum 1 Acceleration</option>
+                <option value="p2acc">Pendulum 2 Acceleration</option>
+                <option value="auxLen">Auxiliary Length</option>
             </select>
+            <p id="sim-time">t = 0</p>
         </div>
         <!-- <div class="canvas-container"> -->
             <canvas id="main-canvas"></canvas>
